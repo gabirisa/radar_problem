@@ -1,0 +1,32 @@
+<main class="login-shell">
+  <a routerLink="/" class="back-link">Volver</a>
+
+  <section class="login-panel" aria-labelledby="login-title">
+    <p>Ikonika</p>
+    <h1 id="login-title">Acceso admin</h1>
+
+    @if (!isConfigured) {
+      <div class="notice">
+        <strong>Supabase pendiente</strong>
+        <span>Configura el entorno para activar el acceso real.</span>
+      </div>
+      <a routerLink="/admin" class="preview-link">Entrar en modo preview</a>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="login()" novalidate>
+        <label>
+          <span>Email</span>
+          <input type="email" formControlName="email" autocomplete="email" />
+        </label>
+        <label>
+          <span>Contrasena</span>
+          <input type="password" formControlName="password" autocomplete="current-password" />
+        </label>
+        <button type="submit" [disabled]="loading()">{{ loading() ? 'Entrando...' : 'Entrar' }}</button>
+      </form>
+    }
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+  </section>
+</main>

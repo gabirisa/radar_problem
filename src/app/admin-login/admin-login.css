@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  color: #0b2236;
+  background: #f4f7f7;
+}
+
+.login-shell {
+  width: min(100% - 32px, 520px);
+  margin: 0 auto;
+  padding: 42px 0;
+}
+
+.back-link,
+.preview-link {
+  color: #006f7d;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.login-panel {
+  margin-top: 28px;
+  padding: 28px;
+  border: 1px solid #d7e0e7;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(11, 34, 54, 0.08);
+}
+
+.login-panel > p {
+  margin: 0 0 4px;
+  color: #66778a;
+  font-size: 0.85rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0 0 24px;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  letter-spacing: 0;
+}
+
+form {
+  display: grid;
+  gap: 18px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  font-weight: 800;
+}
+
+input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #cbd4df;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #102c45;
+  font: inherit;
+}
+
+input:focus {
+  border-color: #007f93;
+  box-shadow: 0 0 0 4px rgba(0, 127, 147, 0.13);
+  outline: none;
+}
+
+button,
+.preview-link {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+button {
+  border: 0;
+  color: #fff;
+  background: #007f93;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.notice,
+.error {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border-radius: 8px;
+}
+
+.notice {
+  color: #254a5e;
+  background: #eef7f7;
+}
+
+.error {
+  color: #9d2730;
+  background: #fff0f1;
+  font-weight: 800;
+}

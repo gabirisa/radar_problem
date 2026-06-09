@@ -1,0 +1,144 @@
+<main class="admin-shell">
+  <header>
+    <a routerLink="/" class="back-link">Volver</a>
+    <div>
+      <p>Ikonika</p>
+      <h1>Panel de fastidios</h1>
+    </div>
+    @if (userEmail()) {
+      <button type="button" class="ghost-button" (click)="logout()">Salir</button>
+    }
+  </header>
+
+  @if (!isConfigured) {
+    <section class="notice">
+      <h2>Supabase pendiente</h2>
+      <p>Configura `src/environments/environment.ts` para activar login, base de datos y realtime.</p>
+    </section>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <section class="dashboard">
+    <div class="dashboard-heading">
+      <div>
+        <p>Envios recibidos</p>
+        <h2>{{ filteredSubmissions().length }} de {{ submissions().length }} problemas</h2>
+      </div>
+      @if (loading()) {
+        <span class="loading-pill">Actualizando</span>
+      }
+    </div>
+
+    <div class="filters" aria-label="Filtros del panel">
+      <label>
+        <span>Estado</span>
+        <select [value]="statusFilter()" (change)="setStatusFilter($any($event.target).value)">
+          <option value="all">Todos</option>
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>Profesion</span>
+        <select [value]="professionFilter()" (change)="setProfessionFilter($any($event.target).value)">
+          <option value="all">Todas</option>
+          @for (profession of professions(); track profession) {
+            <option [value]="profession">{{ profession }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="technical-toggle">
+        <input
+          type="checkbox"
+          [checked]="technicalView()"
+          (change)="technicalView.set($any($event.target).checked)"
+        />
+        <span>Vista tecnica</span>
+      </label>
+    </div>
+
+    @if (filteredSubmissions().length === 0) {
+      <div class="empty">
+        <h3>No hay envios con estos filtros</h3>
+        <p>Cuando alguien complete el formulario, aparecera aqui.</p>
+      </div>
+    } @else {
+      <div class="submission-list">
+        @for (submission of filteredSubmissions(); track trackById($index, submission)) {
+          <article class="submission">
+            <div class="submission-top">
+              <div>
+                <span class="profession">{{ submission.profession }}</span>
+                <time>{{ formatDate(submission.created_at) }}</time>
+              </div>
+              <select
+                [value]="submission.status"
+                (change)="updateStatus(submission, $any($event.target).value)"
+                aria-label="Estado del envio"
+              >
+                @for (status of statuses; track status) {
+                  <option [value]="status">{{ status }}</option>
+                }
+              </select>
+            </div>
+
+            <p class="description">{{ submission.description }}</p>
+
+            <dl>
+              @if (submission.email) {
+                <div>
+                  <dt>Email</dt>
+                  <dd>{{ submission.email }}</dd>
+                </div>
+              }
+              @if (submission.tools) {
+                <div>
+                  <dt>Herramientas</dt>
+                  <dd>{{ submission.tools }}</dd>
+                </div>
+              }
+              @if (submission.extra) {
+                <div>
+                  <dt>Extra</dt>
+                  <dd>{{ submission.extra }}</dd>
+                </div>
+              }
+              @if (technicalView()) {
+                @if (submission.ip_hash) {
+                  <div>
+                    <dt>IP hash</dt>
+                    <dd>{{ submission.ip_hash }}</dd>
+                  </div>
+                }
+                @if (submission.duplicate_of) {
+                  <div>
+                    <dt>Duplicado de</dt>
+                    <dd>{{ submission.duplicate_of }}</dd>
+                  </div>
+                }
+                @if (submission.user_agent) {
+                  <div>
+                    <dt>User agent</dt>
+                    <dd>{{ submission.user_agent }}</dd>
+                  </div>
+                }
+                @if (submission.metadata['duplicate_score']) {
+                  <div>
+                    <dt>Similitud</dt>
+                    <dd>{{ submission.metadata['duplicate_score'] }}</dd>
+                  </div>
+                }
+              }
+            </dl>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</main>
