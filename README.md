@@ -36,6 +36,7 @@ supabase secrets set DUPLICATE_WINDOW_DAYS="90"
 ```
 
 La tabla `submissions` no acepta inserts anonimos. El formulario llama a la Edge Function usando la publishable key, y la funcion valida honeypot, calcula `ip_hash`, aplica rate limiting y usa `pg_trgm` para marcar posibles duplicados.
+`IP_HASH_SALT` es recomendable. Si no existe, la funcion usa `SUPABASE_SERVICE_ROLE_KEY` como sal privada de respaldo.
 
 El contador publico no escucha `submissions`. Lee y se suscribe a `landing_stats`, una tabla agregada con solo `problem_count` y `profession_count`. Cuentan los estados `pending` y `approved`; `spam` y `duplicate` no suman.
 

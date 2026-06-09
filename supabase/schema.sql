@@ -196,6 +196,9 @@ grant usage on schema public to anon, authenticated;
 grant select on public.landing_stats to anon, authenticated;
 grant select, update on public.submissions to authenticated;
 grant select on public.admins to authenticated;
+grant select, insert, update on public.submissions to service_role;
+grant select, update on public.landing_stats to service_role;
+grant select on public.admins to service_role;
 
 do $$
 begin

@@ -63,17 +63,18 @@ Deno.serve(async (request) => {
   const rateLimitSince = new Date(Date.now() - rateLimitWindowMinutes * 60 * 1000).toISOString();
   const duplicateSince = new Date(Date.now() - duplicateWindowDays * 24 * 60 * 60 * 1000).toISOString();
 
-  const { count: recentCount, error: rateLimitError } = await supabase
+  const { data: recentSubmissions, error: rateLimitError } = await supabase
     .from('submissions')
-    .select('id', { count: 'exact', head: true })
+    .select('id')
     .eq('ip_hash', ipHash)
-    .gte('created_at', rateLimitSince);
+    .gte('created_at', rateLimitSince)
+    .limit(rateLimitMax);
 
   if (rateLimitError) {
-    return json({ error: rateLimitError.message }, 500);
+    return json({ stage: 'rate_limit', error: describeError(rateLimitError) }, 500);
   }
 
-  const rateLimited = (recentCount ?? 0) >= rateLimitMax;
+  const rateLimited = (recentSubmissions?.length ?? 0) >= rateLimitMax;
   let duplicate: { id: string; score: number } | null = null;
 
   if (!rateLimited) {
@@ -86,7 +87,7 @@ Deno.serve(async (request) => {
       .limit(1);
 
     if (duplicateError) {
-      return json({ error: duplicateError.message }, 500);
+      return json({ stage: 'duplicate_check', error: describeError(duplicateError) }, 500);
     }
 
     duplicate = similar?.[0] ?? null;
@@ -116,7 +117,7 @@ Deno.serve(async (request) => {
   });
 
   if (error) {
-    return json({ error: error.message }, 500);
+    return json({ stage: 'insert', error: describeError(error) }, 500);
   }
 
   return json({ ok: true, status });
@@ -160,6 +161,26 @@ function optionalEmail(value?: string): string | null {
 function isValidEmail(value: string): boolean {
   const cleaned = clean(value);
   return cleaned.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleaned);
+}
+
+function describeError(error: unknown): string {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  if (typeof error === 'object' && error !== null) {
+    const record = error as Record<string, unknown>;
+    const parts = [record['message'], record['details'], record['hint'], record['code']]
+      .filter((value) => typeof value === 'string' && value.length > 0);
+
+    if (parts.length > 0) {
+      return parts.join(' | ');
+    }
+
+    return JSON.stringify(record);
+  }
+
+  return String(error);
 }
 
 function getClientIp(request: Request): string {

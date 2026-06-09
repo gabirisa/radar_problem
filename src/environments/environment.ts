@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  supabaseUrl: 'https://YOUR_PROJECT_REF.supabase.co',
-  supabasePublishableKey: 'YOUR_SUPABASE_PUBLISHABLE_KEY',
+  supabaseUrl: 'https://pddehswqnawfpiyxcxzg.supabase.co',
+  supabasePublishableKey: 'sb_publishable_p2lwyqxITeBcjHG7V0XTIA_spGkPnt5',
   submitFunctionName: 'submit-problem',
 };
