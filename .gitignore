@@ -44,3 +44,7 @@ __screenshots__/
 Thumbs.db
 .editorconfig
 datos.txt
+src/environments/environment.ts
+supabase/.temp/linked-project.json
+supabase/.temp/cli-latest
+src/environments/environment.ts
