@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from '@supabase/supabase-js';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -43,9 +43,9 @@ Deno.serve(async (request) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-  const ipHashSalt = Deno.env.get('IP_HASH_SALT');
+  const ipHashSalt = Deno.env.get('IP_HASH_SALT') ?? serviceRoleKey;
 
-  if (!supabaseUrl || !serviceRoleKey || !ipHashSalt) {
+  if (!supabaseUrl || !serviceRoleKey) {
     return json({ error: 'Server is not configured' }, 500);
   }
 
