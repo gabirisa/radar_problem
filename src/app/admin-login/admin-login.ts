@@ -45,7 +45,7 @@ export class AdminLogin implements OnInit {
       await this.submissions.signIn(email, password);
       await this.router.navigateByUrl('/admin');
     } catch {
-      this.error.set('No se pudo iniciar sesion. Revisa el email y la contrasena.');
+      this.error.set('No se pudo iniciar sesión. Revisa el email y la contraseña.');
     } finally {
       this.loading.set(false);
     }

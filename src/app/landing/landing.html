@@ -6,7 +6,7 @@
 
     <p class="kicker">Construimos herramientas.<br />Solucionamos problemas.</p>
     <h1>¿Qué te fastidia?</h1>
-    <h2>Dinos cual es tu tarea mas odiada del trabajo.</h2>
+    <h2>Dinos cuál es tu tarea más odiada del trabajo.</h2>
 
     <ul class="pain-list" aria-label="Ejemplos de tareas molestas">
       <li>
@@ -29,10 +29,10 @@
       </li>
     </ul>
 
-    <div class="intro-copy">      
-      <p>Queremos entender que problema necesitas solucionar y ponernos manos a la obra.</p>
+    <div class="intro-copy">
+      <p>Queremos entender qué problema necesitas solucionar y ponernos manos a la obra.</p>
       <p>Si encontramos una buena forma de arreglarlo, intentaremos construirla.</p>
-      <p>No hace falta que sea un gran problema. A veces las pequenas tareas son las mas molestas.</p>
+      <p>No hace falta que sea un gran problema. A veces las pequeñas tareas son las más molestas.</p>
     </div>
 
     <div class="stats" aria-label="Contadores">
@@ -57,35 +57,36 @@
 
     @if (!isConfigured) {
       <p class="setup-note">
-        Modo preview: los envios se guardan en este navegador hasta configurar Supabase.
+        Modo preview: los envíos se guardan en este navegador hasta configurar Supabase.
       </p>
     }
 
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>      
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <label>
-        <span>Describe la tarea que mas te molesta</span>
+        <span>Describe la tarea que más te molesta</span>
         <textarea
           formControlName="description"
           rows="5"
           [class.invalid]="showError('description')"
-          placeholder="¿en qué consiste? ¿cuando la haces? ¿por que te fastidia? Nos valen pocas palabras pero si quieres extenderte, aún mejor"
+          placeholder="¿En qué consiste? ¿Cuándo la haces? ¿Por qué te fastidia? Nos valen pocas palabras, pero si quieres extenderte, aún mejor"
         ></textarea>
       </label>
-      <p class="hint">{{ descriptionLength() }}/20 minimo</p>
+      <p class="hint">{{ descriptionLength() }}/20 mínimo</p>
       @if (showError('description')) {
-        <p class="field-error">Cuentanos un poco mas para entender bien el problema.</p>
+        <p class="field-error">Cuéntanos un poco más para entender bien el problema.</p>
       }
+
       <label>
-        <span>¿A que te dedicas?</span>
+        <span>¿A qué te dedicas?</span>
         <select formControlName="profession" [class.invalid]="showError('profession')">
-          <option value="" disabled>Ej. Marketing, administracion, diseno...</option>
+          <option value="" disabled>Ej. Marketing, administración, diseño...</option>
           @for (profession of professions; track profession) {
             <option [value]="profession">{{ profession }}</option>
           }
         </select>
       </label>
       @if (showError('profession')) {
-        <p class="field-error">Elige una profesion para ayudarnos a clasificarlo.</p>
+        <p class="field-error">Elige una profesión para ayudarnos a clasificarlo.</p>
       }
       @if (isOtherProfession()) {
         <label>
@@ -102,18 +103,18 @@
       }
 
       <label>
-        <span>Con que herramientas la haces actualmente? <em>(opcional)</em></span>
-        <input formControlName="tools" placeholder="Ej. Excel, hojas de calculo, emails, papel y boli..." />
+        <span>¿Con qué herramientas la haces actualmente? <em>(opcional)</em></span>
+        <input formControlName="tools" placeholder="Ej. Excel, hojas de cálculo, emails, papel y boli..." />
       </label>
 
       <label>
-        <span>Hay algo mas que quieras anadir? <em>(opcional)</em></span>
+        <span>¿Hay algo más que quieras añadir? <em>(opcional)</em></span>
         <input formControlName="extra" placeholder="Todo lo que quieras decirnos que nos ayude a entender mejor el problema." />
       </label>
 
       <label>
         <span>¿Te avisamos si construimos una solución para este problema? Déjanos tu email <em>(opcional)</em>
-          <p>Te informaremos, y para agradecerte que nos hayas ayudado a identificarlo, podrás probarla, ayudarnos a mejorarla desde el principio y disfrutar de condiciones especiales para siempre</p></span>
+          <p>Te informaremos y, para agradecerte que nos hayas ayudado a identificarlo, podrás probarla, ayudarnos a mejorarla desde el principio y disfrutar de condiciones especiales para siempre.</p></span>
         <input
           type="email"
           formControlName="email"
@@ -123,7 +124,7 @@
         />
       </label>
       @if (showError('email')) {
-        <p class="field-error">Escribe un email valido o deja el campo vacio.</p>
+        <p class="field-error">Escribe un email válido o deja el campo vacío.</p>
       }
 
       <label class="honeypot" aria-hidden="true">

@@ -24,7 +24,7 @@
   <section class="dashboard">
     <div class="dashboard-heading">
       <div>
-        <p>Envios recibidos</p>
+          <p>Envíos recibidos</p>
         <h2>{{ filteredSubmissions().length }} de {{ submissions().length }} problemas</h2>
       </div>
       @if (loading()) {
@@ -44,7 +44,7 @@
       </label>
 
       <label>
-        <span>Profesion</span>
+        <span>Profesión</span>
         <select [value]="professionFilter()" (change)="setProfessionFilter($any($event.target).value)">
           <option value="all">Todas</option>
           @for (profession of professions(); track profession) {
@@ -59,14 +59,14 @@
           [checked]="technicalView()"
           (change)="technicalView.set($any($event.target).checked)"
         />
-        <span>Vista tecnica</span>
+        <span>Vista técnica</span>
       </label>
     </div>
 
     @if (filteredSubmissions().length === 0) {
       <div class="empty">
-        <h3>No hay envios con estos filtros</h3>
-        <p>Cuando alguien complete el formulario, aparecera aqui.</p>
+        <h3>No hay envíos con estos filtros</h3>
+        <p>Cuando alguien complete el formulario, aparecerá aquí.</p>
       </div>
     } @else {
       <div class="submission-list">

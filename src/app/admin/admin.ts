@@ -106,7 +106,7 @@ export class Admin implements OnInit, OnDestroy {
     try {
       this.submissions.set(await this.submissionsService.listSubmissions());
     } catch {
-      this.error.set('No se pudieron cargar los envios.');
+      this.error.set('No se pudieron cargar los envíos.');
     } finally {
       this.loading.set(false);
     }
