@@ -22,6 +22,8 @@ export class Admin implements OnInit, OnDestroy {
   protected readonly submissions = signal<Submission[]>([]);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
+  protected readonly draftStatuses = signal<Record<string, SubmissionStatus>>({});
+  protected readonly savingStatusIds = signal<Record<string, boolean>>({});
   protected readonly statuses: SubmissionStatus[] = ['pending', 'approved', 'spam', 'duplicate'];
   protected readonly statusFilter = signal<SubmissionStatus | 'all'>('all');
   protected readonly professionFilter = signal<string>('all');
@@ -74,17 +76,57 @@ export class Admin implements OnInit, OnDestroy {
     this.professionFilter.set(value);
   }
 
-  protected async updateStatus(submission: Submission, status: SubmissionStatus): Promise<void> {
-    const previous = submission.status;
-    this.submissions.update((items) => items.map((item) => (item.id === submission.id ? { ...item, status } : item)));
+  protected selectedStatus(submission: Submission): SubmissionStatus {
+    return this.draftStatuses()[submission.id] ?? submission.status;
+  }
+
+  protected hasStatusChange(submission: Submission): boolean {
+    return this.selectedStatus(submission) !== submission.status;
+  }
+
+  protected isSavingStatus(submission: Submission): boolean {
+    return this.savingStatusIds()[submission.id] ?? false;
+  }
+
+  protected setDraftStatus(submission: Submission, status: SubmissionStatus): void {
+    this.draftStatuses.update((drafts) => {
+      const next = { ...drafts };
+
+      if (status === submission.status) {
+        delete next[submission.id];
+      } else {
+        next[submission.id] = status;
+      }
+
+      return next;
+    });
+  }
+
+  protected async saveStatus(submission: Submission): Promise<void> {
+    const status = this.selectedStatus(submission);
+
+    if (status === submission.status || this.isSavingStatus(submission)) {
+      return;
+    }
+
+    this.savingStatusIds.update((ids) => ({ ...ids, [submission.id]: true }));
 
     try {
       await this.submissionsService.updateStatus(submission.id, status);
+      this.submissions.update((items) => items.map((item) => (item.id === submission.id ? { ...item, status } : item)));
+      this.draftStatuses.update((drafts) => {
+        const next = { ...drafts };
+        delete next[submission.id];
+        return next;
+      });
     } catch {
-      this.submissions.update((items) =>
-        items.map((item) => (item.id === submission.id ? { ...item, status: previous } : item)),
-      );
       this.error.set('No se pudo actualizar el estado.');
+    } finally {
+      this.savingStatusIds.update((ids) => {
+        const next = { ...ids };
+        delete next[submission.id];
+        return next;
+      });
     }
   }
 
@@ -105,6 +147,7 @@ export class Admin implements OnInit, OnDestroy {
 
     try {
       this.submissions.set(await this.submissionsService.listSubmissions());
+      this.draftStatuses.set({});
     } catch {
       this.error.set('No se pudieron cargar los envíos.');
     } finally {

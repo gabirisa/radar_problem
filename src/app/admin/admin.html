@@ -77,15 +77,25 @@
                 <span class="profession">{{ submission.profession }}</span>
                 <time>{{ formatDate(submission.created_at) }}</time>
               </div>
-              <select
-                [value]="submission.status"
-                (change)="updateStatus(submission, $any($event.target).value)"
-                aria-label="Estado del envio"
-              >
-                @for (status of statuses; track status) {
-                  <option [value]="status">{{ status }}</option>
-                }
-              </select>
+              <div class="status-editor">
+                <select
+                  [value]="selectedStatus(submission)"
+                  (change)="setDraftStatus(submission, $any($event.target).value)"
+                  aria-label="Estado del envio"
+                >
+                  @for (status of statuses; track status) {
+                    <option [value]="status">{{ status }}</option>
+                  }
+                </select>
+                <button
+                  type="button"
+                  class="save-status"
+                  [disabled]="!hasStatusChange(submission) || isSavingStatus(submission)"
+                  (click)="saveStatus(submission)"
+                >
+                  {{ isSavingStatus(submission) ? 'Guardando' : 'Guardar' }}
+                </button>
+              </div>
             </div>
 
             <p class="description">{{ submission.description }}</p>
