@@ -270,6 +270,10 @@ textarea {
   min-height: 220px;
 }
 
+.short-textarea {
+  min-height: 104px;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
@@ -519,5 +523,9 @@ footer a:hover {
 
   textarea {
     min-height: 260px;
+  }
+
+  .short-textarea {
+    min-height: 124px;
   }
 }

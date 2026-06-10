@@ -86,15 +86,25 @@
               <p class="field-error">Cuéntanos un poco más para entender bien el problema.</p>
             }
 
-            <label>
-              <span>¿Con qué herramientas la haces actualmente? <em>(opcional)</em></span>
-              <input formControlName="tools" placeholder="Ej. Excel, hojas de cálculo, emails..." />
-            </label>
+              <label>
+                <span>¿Con qué herramientas la haces actualmente? <em>(opcional)</em></span>
+                <textarea
+                  class="short-textarea"
+                  formControlName="tools"
+                  rows="3"
+                  placeholder="Ej. Excel, hojas de cálculo, emails..."
+                ></textarea>
+              </label>
 
-            <label>
-              <span>¿Hay algo más que quieras añadir? <em>(opcional)</em></span>
-              <input formControlName="extra" placeholder="Todo lo que nos ayude a entender mejor el problema." />
-            </label>
+              <label>
+                <span>¿Hay algo más que quieras añadir? <em>(opcional)</em></span>
+                <textarea
+                  class="short-textarea"
+                  formControlName="extra"
+                  rows="3"
+                  placeholder="Todo lo que nos ayude a entender mejor el problema."
+                ></textarea>
+              </label>
           </section>
         }
       </div>
