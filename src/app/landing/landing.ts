@@ -17,6 +17,7 @@ export class Landing implements OnInit, OnDestroy {
   private readonly submissions = inject(SubmissionsService);
   private readonly destroyRef = inject(DestroyRef);
   private statsChannel: RealtimeChannel | null = null;
+  protected readonly maxProblems = 5;
 
   protected readonly professions = [
     'Administración',
@@ -51,6 +52,7 @@ export class Landing implements OnInit, OnDestroy {
   protected readonly stats = signal<LandingStats>({ problemCount: 47, professionCount: 14 });
   protected readonly loading = signal(false);
   protected readonly submitted = signal(false);
+  protected readonly submittedCount = signal(0);
   protected readonly error = signal<string | null>(null);
   protected readonly isConfigured = this.submissions.configured;
   protected readonly isOtherProfession = signal(false);
@@ -59,12 +61,14 @@ export class Landing implements OnInit, OnDestroy {
     profession: ['', Validators.required],
     otherProfession: [''],
     email: ['', Validators.email],
-    description: ['', [Validators.required, Validators.minLength(20)]],
-    tools: [''],
-    extra: [''],
+    problems: this.fb.nonNullable.array([this.createProblemGroup()]),
     website: [''],
     renderedAt: [Date.now()],
   });
+
+  protected get problemControls() {
+    return this.form.controls.problems.controls;
+  }
 
   async ngOnInit(): Promise<void> {
     this.syncOtherProfessionValidators(this.form.controls.profession.value);
@@ -89,6 +93,7 @@ export class Landing implements OnInit, OnDestroy {
   protected async submit(): Promise<void> {
     this.error.set(null);
     this.submitted.set(false);
+    this.submittedCount.set(0);
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -103,25 +108,37 @@ export class Landing implements OnInit, OnDestroy {
         rawValue.profession === 'Otro' ? rawValue.otherProfession.trim() : rawValue.profession;
 
       await this.submissions.submitProblem({
-        ...rawValue,
         profession,
+        email: rawValue.email,
+        problems: rawValue.problems,
+        website: rawValue.website,
+        renderedAt: rawValue.renderedAt,
       });
       this.submitted.set(true);
+      const submittedCount = rawValue.problems.length;
+      this.submittedCount.set(submittedCount);
+
+      while (this.form.controls.problems.length > 1) {
+        this.form.controls.problems.removeAt(this.form.controls.problems.length - 1);
+      }
+
       this.form.reset({
         profession: '',
         otherProfession: '',
         email: '',
+        website: '',
+        renderedAt: Date.now(),
+      });
+      this.form.controls.problems.at(0).reset({
         description: '',
         tools: '',
         extra: '',
-        website: '',
-        renderedAt: Date.now(),
       });
       if (this.isConfigured) {
         this.stats.set(await this.submissions.getStats());
       } else {
         this.stats.update((current) => ({
-          problemCount: current.problemCount + 1,
+          problemCount: current.problemCount + submittedCount,
           professionCount: current.professionCount,
         }));
       }
@@ -132,13 +149,34 @@ export class Landing implements OnInit, OnDestroy {
     }
   }
 
-  protected showError(controlName: 'profession' | 'otherProfession' | 'email' | 'description'): boolean {
+  protected showError(controlName: 'profession' | 'otherProfession' | 'email'): boolean {
     const control = this.form.controls[controlName];
     return control.invalid && (control.dirty || control.touched);
   }
 
-  protected descriptionLength(): number {
-    return this.form.controls.description.value.length;
+  protected showProblemError(index: number, controlName: 'description'): boolean {
+    const control = this.form.controls.problems.at(index).controls[controlName];
+    return control.invalid && (control.dirty || control.touched);
+  }
+
+  protected descriptionLength(index: number): number {
+    return this.form.controls.problems.at(index).controls.description.value.length;
+  }
+
+  protected addProblem(): void {
+    if (this.form.controls.problems.length >= this.maxProblems) {
+      return;
+    }
+
+    this.form.controls.problems.push(this.createProblemGroup());
+  }
+
+  protected removeProblem(index: number): void {
+    if (index === 0 || this.form.controls.problems.length === 1) {
+      return;
+    }
+
+    this.form.controls.problems.removeAt(index);
   }
 
   private syncOtherProfessionValidators(profession: string): void {
@@ -153,5 +191,13 @@ export class Landing implements OnInit, OnDestroy {
     }
 
     otherProfession.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private createProblemGroup() {
+    return this.fb.nonNullable.group({
+      description: ['', [Validators.required, Validators.minLength(20)]],
+      tools: [''],
+      extra: [''],
+    });
   }
 }

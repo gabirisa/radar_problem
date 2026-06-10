@@ -6,9 +6,16 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+type ProblemInput = {
+  description?: string;
+  tools?: string;
+  extra?: string;
+};
+
 type Payload = {
   profession?: string;
   email?: string;
+  problems?: ProblemInput[];
   description?: string;
   tools?: string;
   extra?: string;
@@ -53,7 +60,11 @@ Deno.serve(async (request) => {
     auth: { persistSession: false },
   });
 
-  const cleanedDescription = clean(payload!.description!);
+  const problems = getProblems(payload!).map((problem) => ({
+    description: clean(problem.description!),
+    tools: optionalClean(problem.tools),
+    extra: optionalClean(problem.extra),
+  }));
   const clientIp = getClientIp(request);
   const ipHash = await sha256(`${ipHashSalt}:${clientIp}`);
   const rateLimitMax = Number(Deno.env.get('RATE_LIMIT_MAX') ?? 3);
@@ -75,52 +86,61 @@ Deno.serve(async (request) => {
   }
 
   const rateLimited = (recentSubmissions?.length ?? 0) >= rateLimitMax;
-  let duplicate: { id: string; score: number } | null = null;
+  const rows = [];
 
-  if (!rateLimited) {
-    const { data: similar, error: duplicateError } = await supabase
-      .rpc('find_similar_submission', {
-        input_description: cleanedDescription,
-        since: duplicateSince,
-        threshold: duplicateThreshold,
-      })
-      .limit(1);
+  for (let index = 0; index < problems.length; index += 1) {
+    const problem = problems[index];
+    let duplicate: { id: string; score: number } | null = null;
 
-    if (duplicateError) {
-      return json({ stage: 'duplicate_check', error: describeError(duplicateError) }, 500);
+    if (!rateLimited) {
+      const { data: similar, error: duplicateError } = await supabase
+        .rpc('find_similar_submission', {
+          input_description: problem.description,
+          since: duplicateSince,
+          threshold: duplicateThreshold,
+        })
+        .limit(1);
+
+      if (duplicateError) {
+        return json({ stage: 'duplicate_check', error: describeError(duplicateError) }, 500);
+      }
+
+      duplicate = similar?.[0] ?? null;
     }
 
-    duplicate = similar?.[0] ?? null;
+    const status = rateLimited ? 'spam' : duplicate ? 'duplicate' : 'pending';
+
+    rows.push({
+      profession: clean(payload!.profession!),
+      email: optionalEmail(payload!.email),
+      description: problem.description,
+      tools: problem.tools,
+      extra: problem.extra,
+      ip_hash: ipHash,
+      user_agent: request.headers.get('user-agent'),
+      status,
+      duplicate_of: duplicate?.id ?? null,
+      metadata: {
+        duplicate_score: duplicate?.score ?? null,
+        duplicate_threshold: duplicateThreshold,
+        form_age_ms: ageMs,
+        problem_index: index + 1,
+        problem_count: problems.length,
+        rate_limited: rateLimited,
+        rate_limit_max: rateLimitMax,
+        rate_limit_window_minutes: rateLimitWindowMinutes,
+        source_origin: request.headers.get('origin'),
+      },
+    });
   }
 
-  const status = rateLimited ? 'spam' : duplicate ? 'duplicate' : 'pending';
-
-  const { error } = await supabase.from('submissions').insert({
-    profession: clean(payload!.profession!),
-    email: optionalEmail(payload!.email),
-    description: cleanedDescription,
-    tools: optionalClean(payload!.tools),
-    extra: optionalClean(payload!.extra),
-    ip_hash: ipHash,
-    user_agent: request.headers.get('user-agent'),
-    status,
-    duplicate_of: duplicate?.id ?? null,
-    metadata: {
-      duplicate_score: duplicate?.score ?? null,
-      duplicate_threshold: duplicateThreshold,
-      form_age_ms: ageMs,
-      rate_limited: rateLimited,
-      rate_limit_max: rateLimitMax,
-      rate_limit_window_minutes: rateLimitWindowMinutes,
-      source_origin: request.headers.get('origin'),
-    },
-  });
+  const { error } = await supabase.from('submissions').insert(rows);
 
   if (error) {
     return json({ stage: 'insert', error: describeError(error) }, 500);
   }
 
-  return json({ ok: true, status });
+  return json({ ok: true, count: rows.length, statuses: rows.map((row) => row.status) });
 });
 
 function validate(payload: Payload | null): string | null {
@@ -136,12 +156,33 @@ function validate(payload: Payload | null): string | null {
     return 'Email is invalid';
   }
 
-  const descriptionLength = clean(payload.description ?? '').length;
-  if (descriptionLength < 20 || descriptionLength > 4000) {
-    return 'Description length is invalid';
+  const problems = getProblems(payload);
+  if (problems.length < 1 || problems.length > 5) {
+    return 'Problem count is invalid';
+  }
+
+  for (const problem of problems) {
+    const descriptionLength = clean(problem.description ?? '').length;
+    if (descriptionLength < 20 || descriptionLength > 4000) {
+      return 'Description length is invalid';
+    }
   }
 
   return null;
+}
+
+function getProblems(payload: Payload): ProblemInput[] {
+  if (Array.isArray(payload.problems)) {
+    return payload.problems;
+  }
+
+  return [
+    {
+      description: payload.description,
+      tools: payload.tools,
+      extra: payload.extra,
+    },
+  ];
 }
 
 function clean(value: string): string {

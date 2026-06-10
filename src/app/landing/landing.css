@@ -192,6 +192,35 @@ form {
   gap: 24px;
 }
 
+.problem-list {
+  display: grid;
+  gap: 34px;
+}
+
+.problem-item {
+  display: grid;
+  gap: 24px;
+}
+
+.problem-item + .problem-item {
+  padding-top: 30px;
+  border-top: 1px solid rgba(9, 36, 58, 0.12);
+}
+
+.problem-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.problem-heading h3 {
+  margin: 0;
+  color: #0a2136;
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
 label {
   display: grid;
   gap: 11px;
@@ -258,6 +287,58 @@ textarea:focus {
   width: 1px;
   height: 1px;
   overflow: hidden;
+}
+
+.add-problem,
+.remove-problem {
+  font: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background 160ms ease;
+}
+
+.add-problem {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid rgba(0, 107, 122, 0.35);
+  color: #006b7a;
+  background: rgba(0, 107, 122, 0.05);
+  font-weight: 800;
+}
+
+.add-problem:hover {
+  border-color: #006b7a;
+  background: rgba(0, 107, 122, 0.09);
+}
+
+.add-problem svg {
+  width: 22px;
+  height: 22px;
+}
+
+.remove-problem {
+  border: 0;
+  padding: 6px 0;
+  color: #607386;
+  background: transparent;
+  font-weight: 700;
+}
+
+.remove-problem:hover {
+  color: #9d2730;
+}
+
+.problem-limit {
+  margin: -8px 0 0;
+  color: #66778a;
+  font-weight: 700;
+  text-align: center;
 }
 
 .submit-button {

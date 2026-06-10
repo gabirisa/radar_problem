@@ -5,12 +5,16 @@ import { environment } from '../../environments/environment';
 
 export type SubmissionStatus = 'pending' | 'approved' | 'spam' | 'duplicate';
 
-export interface ProblemPayload {
-  profession: string;
-  email?: string | null;
+export interface ProblemEntryPayload {
   description: string;
   tools?: string | null;
   extra?: string | null;
+}
+
+export interface ProblemPayload {
+  profession: string;
+  email?: string | null;
+  problems: ProblemEntryPayload[];
   website?: string | null;
   renderedAt?: number | null;
 }
@@ -197,22 +201,23 @@ export class SubmissionsService {
 
   private async saveLocalPreview(payload: ProblemPayload): Promise<void> {
     const submissions = this.getLocalPreviewSubmissions();
-    const next: Submission = {
+    const now = new Date().toISOString();
+    const next = payload.problems.map((problem): Submission => ({
       id: crypto.randomUUID(),
-      created_at: new Date().toISOString(),
+      created_at: now,
       profession: payload.profession,
       email: payload.email ?? null,
-      description: payload.description,
-      tools: payload.tools ?? null,
-      extra: payload.extra ?? null,
+      description: problem.description,
+      tools: problem.tools ?? null,
+      extra: problem.extra ?? null,
       status: 'pending',
       ip_hash: null,
       user_agent: navigator.userAgent,
       duplicate_of: null,
       metadata: {},
-    };
+    }));
 
-    localStorage.setItem('fastidios-preview-submissions', JSON.stringify([next, ...submissions].slice(0, 20)));
+    localStorage.setItem('fastidios-preview-submissions', JSON.stringify([...next, ...submissions].slice(0, 20)));
   }
 
   private getLocalPreviewSubmissions(): Submission[] {
