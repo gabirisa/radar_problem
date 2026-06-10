@@ -221,8 +221,25 @@ export class Landing implements OnInit, OnDestroy {
   }
 
   private track(eventName: string): void {
-    const plausible = (window as { plausible?: (eventName: string, options?: { interactive?: boolean }) => void })
-      .plausible;
-    plausible?.(eventName, { interactive: false });
+    const body = JSON.stringify({
+      name: eventName,
+      url: window.location.href,
+      domain: 'radardeproblemas.ikonika.es',
+      referrer: document.referrer,
+      interactive: false,
+    });
+
+    if (navigator.sendBeacon) {
+      const blob = new Blob([body], { type: 'text/plain' });
+      navigator.sendBeacon('https://plausible.io/api/event', blob);
+      return;
+    }
+
+    void fetch('https://plausible.io/api/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body,
+      keepalive: true,
+    });
   }
 }
