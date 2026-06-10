@@ -66,9 +66,9 @@
         <span>Describe la tarea que más te molesta</span>
         <textarea
           formControlName="description"
-          rows="5"
+          rows="8"
           [class.invalid]="showError('description')"
-          placeholder="¿En qué consiste? ¿Cuándo la haces? ¿Por qué te fastidia? Nos valen pocas palabras, pero si quieres extenderte, aún mejor"
+          placeholder="¿En qué consiste? ¿Cuándo la haces? ¿Por qué te fastidia? Nos valen pocas palabras, pero si quieres extenderte, aún mejor."
         ></textarea>
       </label>
       <p class="hint">{{ descriptionLength() }}/20 mínimo</p>
@@ -79,7 +79,7 @@
       <label>
         <span>¿A qué te dedicas?</span>
         <select formControlName="profession" [class.invalid]="showError('profession')">
-          <option value="" disabled>Ej. Marketing, administración, diseño...</option>
+          <option value="" disabled>Elige una opción</option>
           @for (profession of professions; track profession) {
             <option [value]="profession">{{ profession }}</option>
           }
@@ -94,7 +94,7 @@
           <input
             formControlName="otherProfession"
             [class.invalid]="showError('otherProfession')"
-            placeholder="Ej. Logística, formación, salud..."
+            placeholder="Ej. Logística"
           />
         </label>
         @if (showError('otherProfession')) {
@@ -104,17 +104,16 @@
 
       <label>
         <span>¿Con qué herramientas la haces actualmente? <em>(opcional)</em></span>
-        <input formControlName="tools" placeholder="Ej. Excel, hojas de cálculo, emails, papel y boli..." />
+        <input formControlName="tools" placeholder="Ej. Excel, hojas de cálculo, emails..." />
       </label>
 
       <label>
         <span>¿Hay algo más que quieras añadir? <em>(opcional)</em></span>
-        <input formControlName="extra" placeholder="Todo lo que quieras decirnos que nos ayude a entender mejor el problema." />
+        <input formControlName="extra" placeholder="Todo lo que nos ayude a entender mejor el problema." />
       </label>
 
       <label>
-        <span>¿Te avisamos si construimos una solución para este problema? Déjanos tu email <em>(opcional)</em>
-          <p>Te informaremos y, para agradecerte que nos hayas ayudado a identificarlo, podrás probarla, ayudarnos a mejorarla desde el principio y disfrutar de condiciones especiales para siempre.</p></span>
+        <span>¿Te avisamos si construimos una solución para este problema? Déjanos tu email <em>(opcional)</em></span>
         <input
           type="email"
           formControlName="email"

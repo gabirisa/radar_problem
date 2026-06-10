@@ -225,7 +225,7 @@ textarea {
 
 textarea {
   resize: vertical;
-  min-height: 154px;
+  min-height: 220px;
 }
 
 input:focus,
@@ -363,5 +363,20 @@ footer {
 
   .form-panel {
     padding: 26px 22px;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 15px 14px;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    font-size: 0.95rem;
+  }
+
+  textarea {
+    min-height: 260px;
   }
 }
