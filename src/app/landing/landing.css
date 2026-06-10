@@ -312,12 +312,26 @@ footer svg {
 }
 
 footer {
+  flex-direction: column;
   justify-content: center;
   gap: 12px;
   padding: 40px 0 0;
   color: #596a80;
   font-size: 1.05rem;
   text-align: center;
+}
+
+.footer-thanks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.footer-credit {
+  margin: 25px 0 0;
+  font-size: 0.98rem;
 }
 
 footer a {
