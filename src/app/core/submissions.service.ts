@@ -141,7 +141,12 @@ export class SubmissionsService {
       return;
     }
 
-    const { error } = await this.client.from('submissions').update({ status }).eq('id', id);
+    const { error } = await this.client
+      .from('submissions')
+      .update({ status })
+      .eq('id', id)
+      .select('id')
+      .single();
 
     if (error) {
       throw error;
