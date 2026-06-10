@@ -61,7 +61,8 @@
       </p>
     }
 
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>   
+    @if (!submitted()) {
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <div class="problem-list" formArrayName="problems">
         @for (problem of problemControls; track problem; let index = $index) {
           <section class="problem-item" [formGroupName]="index">
@@ -132,7 +133,8 @@
       }
 
       <label>
-        <span>¿Te avisamos si construimos una solución para este problema? Déjanos tu email <em>(opcional)</em></span>
+        <span>¿Te avisamos si construimos una solución para este problema? Déjanos tu email <em>(opcional)</em>
+        <p>Para agradecerte que nos hayas ayudado a identificarlo, podrás probarla, ayudarnos a mejorarla desde el principio y disfrutar de condiciones especiales de uso para siempre</p></span>
         <input
           type="email"
           formControlName="email"
@@ -155,11 +157,13 @@
         {{ loading() ? 'Enviando...' : problemControls.length > 1 ? 'Enviar mis problemas' : 'Enviar mi problema' }}
       </button>
     </form>
-
-    @if (submitted()) {
-      <p class="success">
-        {{ submittedCount() > 1 ? 'Gracias. Ya tenemos tus problemas guardados.' : 'Gracias. Ya tenemos tu problema guardado.' }}
-      </p>
+    } @else {
+      <div class="success-panel">
+        <p class="success">
+          {{ submittedCount() > 1 ? 'Gracias. Ya tenemos tus problemas guardados.' : 'Gracias. Ya tenemos tu problema guardado.' }}
+        </p>
+        <button class="return-home" type="button" (click)="returnToStart()">Volver al inicio</button>
+      </div>
     }
 
     @if (error()) {

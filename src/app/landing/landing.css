@@ -178,6 +178,19 @@ svg {
   background: #e9f8ee;
 }
 
+.success-panel {
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+  padding: 22px 0 6px;
+  text-align: center;
+}
+
+.success-panel .success {
+  width: 100%;
+  margin: 0;
+}
+
 .form-error,
 .field-error {
   color: #9d2730;
@@ -339,6 +352,28 @@ textarea:focus {
   color: #66778a;
   font-weight: 700;
   text-align: center;
+}
+
+.return-home {
+  min-height: 52px;
+  border: 1px solid rgba(0, 107, 122, 0.35);
+  border-radius: 8px;
+  padding: 0 24px;
+  color: #006b7a;
+  background: rgba(0, 107, 122, 0.05);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.return-home:hover {
+  border-color: #006b7a;
+  background: rgba(0, 107, 122, 0.09);
+  transform: translateY(-1px);
 }
 
 .submit-button {

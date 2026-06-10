@@ -179,6 +179,13 @@ export class Landing implements OnInit, OnDestroy {
     this.form.controls.problems.removeAt(index);
   }
 
+  protected returnToStart(): void {
+    this.submitted.set(false);
+    this.submittedCount.set(0);
+    this.form.controls.renderedAt.setValue(Date.now());
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   private syncOtherProfessionValidators(profession: string): void {
     const otherProfession = this.form.controls.otherProfession;
     this.isOtherProfession.set(profession === 'Otro');
