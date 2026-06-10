@@ -78,8 +78,14 @@
                 formControlName="description"
                 rows="8"
                 [class.invalid]="showProblemError(index, 'description')"
-                placeholder="¿En qué consiste? ¿Cuándo la haces? ¿Por qué te fastidia? Nos valen pocas palabras, pero si quieres extenderte, aún mejor. Algunos ejemplos: Preparar presupuestos siempre desde cero,
-                revisar una a una tus carpetas para encontrar información, responder las mismas preguntas siempre, tener mil notitas para recordar cosas..."
+                placeholder="
+                Nos valen pocas palabras, pero si quieres extenderte, aún mejor
+
+                Por ejemplo: Preparar presupuestos siempre desde cero, revisar una a una tus carpetas 
+                para encontrar información, responder las mismas preguntas siempre, 
+                tener mil notitas para recordar cosas...
+
+                ¿en qué consiste la tuya? ¿cuándo la haces? ¿por qué te fastidia? "
               ></textarea>
             </label>
             <p class="hint">{{ descriptionLength(index) }}/20 mínimo</p>
