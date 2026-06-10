@@ -17,6 +17,7 @@ export class Landing implements OnInit, OnDestroy {
   private readonly submissions = inject(SubmissionsService);
   private readonly destroyRef = inject(DestroyRef);
   private statsChannel: RealtimeChannel | null = null;
+  private hasStartedProblem = false;
   protected readonly maxProblems = 5;
 
   protected readonly professions = [
@@ -115,6 +116,7 @@ export class Landing implements OnInit, OnDestroy {
         renderedAt: rawValue.renderedAt,
       });
       this.submitted.set(true);
+      this.track('problem_submitted');
       const submittedCount = rawValue.problems.length;
       this.submittedCount.set(submittedCount);
 
@@ -143,6 +145,7 @@ export class Landing implements OnInit, OnDestroy {
         }));
       }
     } catch {
+      this.track('problem_submit_error');
       this.error.set('No hemos podido guardar tu problema. Prueba de nuevo en un momento.');
     } finally {
       this.loading.set(false);
@@ -161,6 +164,15 @@ export class Landing implements OnInit, OnDestroy {
 
   protected descriptionLength(index: number): number {
     return this.form.controls.problems.at(index).controls.description.value.length;
+  }
+
+  protected onProblemInput(): void {
+    if (this.hasStartedProblem) {
+      return;
+    }
+
+    this.hasStartedProblem = true;
+    this.track('problem_started');
   }
 
   protected addProblem(): void {
@@ -206,5 +218,10 @@ export class Landing implements OnInit, OnDestroy {
       tools: [''],
       extra: [''],
     });
+  }
+
+  private track(eventName: string): void {
+    const plausible = (window as { plausible?: (eventName: string) => void }).plausible;
+    plausible?.(eventName);
   }
 }
