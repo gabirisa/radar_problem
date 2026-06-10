@@ -221,7 +221,8 @@ export class Landing implements OnInit, OnDestroy {
   }
 
   private track(eventName: string): void {
-    const plausible = (window as { plausible?: (eventName: string) => void }).plausible;
-    plausible?.(eventName);
+    const plausible = (window as { plausible?: (eventName: string, options?: { interactive?: boolean }) => void })
+      .plausible;
+    plausible?.(eventName, { interactive: false });
   }
 }
