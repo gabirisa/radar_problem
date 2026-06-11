@@ -79,13 +79,13 @@
               </div>
               <div class="status-editor">
                 <select
-                  [value]="submission.status"
+                  [ngModel]="submission.status"
                   [disabled]="isSavingStatus(submission)"
-                  (change)="updateStatus(submission, $any($event.target).value)"
+                  (ngModelChange)="updateStatus(submission, $event)"
                   aria-label="Estado del envio"
                 >
                   @for (status of statuses; track status) {
-                    <option [value]="status">{{ status }}</option>
+                    <option [ngValue]="status">{{ status }}</option>
                   }
                 </select>
                 @if (isSavingStatus(submission)) {

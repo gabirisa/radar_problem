@@ -77,13 +77,12 @@
               <p class="problem-help">
                 Nos valen pocas palabras, pero si quieres extenderte, aún mejor. Por ejemplo: hacer presupuestos siempre desde cero, revisar una a una tus carpetas para encontrar información, responder las mismas preguntas siempre, tener mil notitas para recordar cosas...
               </p>
-                <textarea
-                  formControlName="description"
-                  rows="8"
-                  (input)="onProblemInput()"
-                  [class.invalid]="showProblemError(index, 'description')"
-                  placeholder="¿en qué consiste la tuya? ¿cuándo la haces? ¿por qué te fastidia?"
-                ></textarea>
+              <textarea
+                formControlName="description"
+                rows="8"
+                [class.invalid]="showProblemError(index, 'description')"
+                placeholder="¿en qué consiste la tuya? ¿cuándo la haces? ¿por qué te fastidia?"
+              ></textarea>
             </label>
             <p class="hint">{{ descriptionLength(index) }}/20 mínimo</p>
             @if (showProblemError(index, 'description')) {
